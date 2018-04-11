@@ -1,0 +1,11 @@
+.DS_Store
+debug*
+datasets/
+checkpoints/
+results/
+build/
+dist/
+*.png
+*.tif
+*.tiff
+
