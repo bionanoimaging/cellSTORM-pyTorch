@@ -11,7 +11,7 @@ The initial code was written by [Jun-Yan Zhu](https://github.com/junyanz) and [T
 
 
 #### cellSTORM:  [[Paper]](https://arxiv.org/pdf/commingsoon.pdf)
-<img src="https://github.com/bionanoimaging/cellSTORM-pyTorch/images/Hela_A_to_B.png"/>
+<img src="https://github.com/bionanoimaging/cellSTORM-pyTorch/blob/master/images/Hela_A_to_B.png"/>
 
 If you use this code for your research, please cite:
 
