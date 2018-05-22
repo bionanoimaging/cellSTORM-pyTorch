@@ -23,18 +23,15 @@ WARNING: It saves the images to TIFF stacks (BIG TIFF - always concatening the f
 # HOW TO USE? (command line)
 
 
-cd /home/diederich/Documents/STORM/PYTHON/pytorch-CycleGAN-and-pix2pix/
+cd /media/useradmin/Data/Benedict/Dropbox/Dokumente/Promotion/PROJECTS/STORM/PYTHON/cellSTORM_pytorch/
 
 python test.py \
 --dataroot /home/diederich/Documents/STORM/DATASET_NN/04_UNPROCESSED_RAW_HW/2018-01-23_17.53.21_oldSample_ISO3200_10xEypiece_texp_1_30_256 \
 --ndf 32 \
 --ngf 32 \
 --which_model_netG unet_256 \
---model pix2pix \
---which_direction AtoB \
 --dataset_mode aligned \
 --norm batch \
---batchSize 8 \
 --input_nc 1 \
 --output_nc 1 \
 --gpu_ids 0,1 \
@@ -43,42 +40,64 @@ python test.py \
 --name random_blink_psf_bkgr_nocheckerboard_gtpsf_V5_shifted_UNET \
 --how_many 100000
 
+##############
+for reconstructing a video:
+
+cd /media/useradmin/Data/Benedict/Dropbox/Dokumente/Promotion/PROJECTS/STORM/PYTHON/cellSTORM_pytorch/
+  
+python test.py \
+--dataroot /media/useradmin/Data/Benedict/Dropbox/Dokumente/Promotion/PROJECTS/STORM/MATLAB/Alex_Images_Vergleich/Stack/TestSNR_Compression_nphotons_1000_compression_10.m4v \
+--which_direction AtoB \
+--dataset_mode aligned \
+--norm batch \
+--no_dropout \
+--ndf 64 --ngf 64 \
+--name alltogether_2 \
+--how_many 50000 \
+--which_model_netG unet_256 \
+--is_video 1 \
+--roisize 256 \
+--xcenter 128 \
+--ycenter 128
+
+# x/ycenter are the center coordinates around the roi with size roisize is cropped out
+
+
 
 
 """
 
+# define input parameters
 opt = TestOptions().parse()
 opt.nThreads = 1   # test code only supports nThreads = 1
 opt.batchSize = 1  # test code only supports batchSize = 1
 opt.serial_batches = True  # no shuffle
 opt.no_flip = True  # no flip
+opt.which_direction = 'AtoB'
+opt.finesize = opt.padwidth*2+opt.roisize
+opt.loadsize = opt.padwidth*2+opt.roisize
+
+
+
 
 data_loader = CreateDataLoader(opt)
 dataset = data_loader.load_data()
 model = create_model(opt)
 visualizer = Visualizer(opt)
 
-# get the image filesize
-# options for fine/load-size is prohibitted! 
-file_names = [fn for fn in os.listdir(opt.dataroot+'/test')
-              if any(fn.endswith(ext) for ext in '.png')][0]
-im_size = Image.open(opt.dataroot+'/test/'+file_names).size
-opt.loadSize = im_size[1]    
-opt.fineSize = im_size[1] 
+
+
 
 # accept only grayscale images  
 opt.input_nc = 1
 opt.output_nc = 1 
-
-# some further dataset settings
-opt.which_direction = 'AtoB'
 
 
 
 
 # create filedir according to the filename
 dataroot_name = opt.dataroot.split('/')[-1]
-myfile_dir = ('./myresults/' + dataroot_name)
+myfile_dir = ('./myresults/' + dataroot_name + '_' + opt.name)
 if not os.path.exists(myfile_dir):
     os.makedirs(myfile_dir)
     
@@ -95,7 +114,12 @@ for i, data in enumerate(dataset):
     model.test()
     visuals = model.get_current_visuals()
     
-    print('%04d: process image...' % (i))
+    
+    _, i_filename = os.path.split("".join(data['B_paths']))
+    
+    print(str(i)+': process image... name: ' + i_filename)
+  
+    
  
     # realA
     name_realA = visuals.iteritems().next()[0]
@@ -110,10 +134,11 @@ for i, data in enumerate(dataset):
     tifffile.imsave(fakeB_filename, val_fakeB, append=True, bigtiff=True)
     
     # realB
-    name_realB = visuals.items()[2][0]
-    val_realB = visuals.items()[2][1]
-    val_realB = np.squeeze(val_realB[:,:,0])
-    tifffile.imsave(realB_filename, val_realB, append=True, bigtiff=True)
+    if not(opt.is_video):
+	    name_realB = visuals.items()[2][0]
+	    val_realB = visuals.items()[2][1]
+	    val_realB = np.squeeze(val_realB[:,:,0])
+	    tifffile.imsave(realB_filename, val_realB, append=True, bigtiff=True)
 
 
 

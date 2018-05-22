@@ -1,4 +1,3 @@
-<img src='imgs/horse2zebra.gif' align="right" width=384>
 
 <br><br><br>
 
@@ -51,7 +50,9 @@ cd pytorch-CycleGAN-and-pix2pix
 ```
 
 ### cellSTORM train/test
-- Have a look at the MATLAB repo to create the datasets (cellSTORM-MATLAB):
+- Have a look at the MATLAB repo to create the datasets	:
+[cellSTORM-MATLAB](https://github.com/bionanoimaging/cellSTORM-MATLAB)
+
 
 - Train a model:
 ```bash

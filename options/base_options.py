@@ -39,7 +39,10 @@ class BaseOptions():
         self.parser.add_argument('--resize_or_crop', type=str, default='resize_and_crop', help='scaling and cropping of images at load time [resize_and_crop|crop|scale_width|scale_width_and_crop]')
         self.parser.add_argument('--no_flip', action='store_true', help='if specified, do not flip the images for data augmentation')
         self.parser.add_argument('--init_type', type=str, default='normal', help='network initialization [normal|xavier|kaiming|orthogonal]')
-
+        
+        self.parser.add_argument('--is_video', type=int, default=int("0"), help='images are sampled from a videofile?')
+        
+        
         self.initialized = True
 
     def parse(self):

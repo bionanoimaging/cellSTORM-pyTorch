@@ -4,17 +4,13 @@ from data.base_data_loader import BaseDataLoader
 
 def CreateDataset(opt):
     dataset = None
-    if opt.dataset_mode == 'aligned':
-        from data.aligned_dataset import AlignedDataset
-        dataset = AlignedDataset()
-    elif opt.dataset_mode == 'unaligned':
-        from data.unaligned_dataset import UnalignedDataset
-        dataset = UnalignedDataset()
-    elif opt.dataset_mode == 'single':
-        from data.single_dataset import SingleDataset
-        dataset = SingleDataset()
+    from data.aligned_dataset import AlignedDataset
+    from data.video_dataset import VideoDataset
+
+    if opt.is_video:
+        dataset = VideoDataset()
     else:
-        raise ValueError("Dataset [%s] not recognized." % opt.dataset_mode)
+        dataset = AlignedDataset()
 
     print("dataset [%s] was created" % (dataset.name()))
     dataset.initialize(opt)
